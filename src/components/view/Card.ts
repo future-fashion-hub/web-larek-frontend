@@ -16,6 +16,13 @@ export class Card extends Component<IBaseCard> {
   protected _price?: HTMLElement;
   protected _button?: HTMLButtonElement;
   protected _id?: string;
+  protected categoryColor:  Record<string, string> = {
+    'софт-скил': 'card__category_soft',
+    'хард-скил': 'card__category_hard',
+    'дополнительное': 'card__category_additional',
+    'другое': 'card__category_other',
+    'кнопка': 'card__category_button',
+  }
 
   constructor(container: HTMLElement, events: IEvents, protected buttonIsDisabled?: boolean) {
     super(container);
@@ -36,8 +43,7 @@ export class Card extends Component<IBaseCard> {
        this._button.addEventListener('click', () => {
         if (this._price.textContent !== 'Бесценно') {
           events.emit('basket:add', {id: this._id});
-          this.setDisabled(this._button, true)
-          this.setText(this._button, 'Уже в корзине')
+          this.setBasketState(true);
         }
       })
     }
@@ -59,6 +65,7 @@ export class Card extends Component<IBaseCard> {
 
   set category(value: string) {
     this.setText(this._category, value);
+    if (this._category) { this.toggleClass(this._category, this.categoryColor[value], true) }
   }
 
   set description(value: string) {
@@ -67,12 +74,11 @@ export class Card extends Component<IBaseCard> {
 
   set price(value: number | null) {
     if (value == null) {
-      this.setText(this._price, 'Бесценно')
-      this.setText(this._button, 'Нельзя купить')
-      this.setDisabled(this._button, true)
+      this.setText(this._price, 'Бесценно');
+      this.setBasketState(false); // Устанавливаем состояние "нельзя купить"
     } else {
-      this.setText(this._price, value + ' синапсов')
-      this.setDisabled(this._button, false)
+      this.setText(this._price, value + ' синапсов');
+      // Состояние кнопки обновится через buttonDisabled
     }
   }
 
@@ -81,9 +87,17 @@ export class Card extends Component<IBaseCard> {
   }
 
   set buttonDisabled(value: boolean) {
-    this.setDisabled(this._button, value);
-    if (value) {
-      this.setText(this._button, 'Уже в корзине')
+    this.setBasketState(value);
+  }
+
+  private setBasketState(isInBasket: boolean) {
+    if (this._price.textContent === 'Бесценно') {
+      this.setDisabled(this._button, true);
+      this.setText(this._button, 'Нельзя купить');
+    } else {
+      this.setDisabled(this._button, isInBasket);
+      this.setText(this._button, isInBasket ? 'Уже в корзине' : 'В корзину');
     }
   }
+
 } 

@@ -22,6 +22,12 @@ export class Busket extends Component<IBasket> {
   }
 
   set busketItems(items: HTMLElement[]) {
+    items.forEach((item, index) => {
+      const indexElement = item.querySelector('.basket__item-index');
+      if (indexElement) {
+        indexElement.textContent = String(index + 1); 
+      }
+    });
     this._busketItems.replaceChildren(...items);
   }
 

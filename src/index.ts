@@ -40,7 +40,9 @@ events.on('catalog:changed', () => {
 events.on('card:open', (data: { id: string }) => {
   const cardById = catalog.getCard(data.id);
   const checkItemInBusket = busket.getItems().some(item => item.id === data.id)
-  const cardHTML = new Card(cloneTemplate(cardPreviewTemp as HTMLTemplateElement), events).render({...cardById, buttonDisabled: checkItemInBusket});
+  const cardHTML = new Card(cloneTemplate(cardPreviewTemp as HTMLTemplateElement), events).render({
+    ...cardById,
+    buttonDisabled: checkItemInBusket || cardById.price === null});
   modal.render({
     content: cardHTML,
   })
