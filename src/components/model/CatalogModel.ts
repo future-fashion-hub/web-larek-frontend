@@ -4,7 +4,7 @@ import { IEvents } from "../base/events";
 export class CatalogModel {
   protected catalog: ICard[];
   protected preview: string | null;
- 
+
   constructor(protected events: IEvents){}
   
   getCatalog(): ICard[] {

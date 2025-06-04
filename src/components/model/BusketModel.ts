@@ -2,7 +2,7 @@ import { ICard } from "../../types";
 import { IEvents } from "../base/events";
 
 export class BusketModel {
-  items: ICard[];
+  items: ICard[] = [];
   total: number;
   
   constructor(events: IEvents) {}
@@ -29,5 +29,9 @@ export class BusketModel {
 
   isEmpty(): boolean {
     return this.items ? false : true;
+  }
+
+  getTotalEmount(): number {
+    return this.items.length
   }
 }
