@@ -16,12 +16,13 @@ export class Card extends Component<IBaseCard> {
   protected _price?: HTMLElement;
   protected _button?: HTMLButtonElement;
   protected _id?: string;
+
   protected categoryColor:  Record<string, string> = {
-    'софт-скил': 'card__category_soft',
-    'хард-скил': 'card__category_hard',
-    'дополнительное': 'card__category_additional',
-    'другое': 'card__category_other',
-    'кнопка': 'card__category_button',
+		'софт-скил': 'card__category_soft',
+		'хард-скил': 'card__category_hard',
+		'дополнительное': 'card__category_additional',
+		'другое': 'card__category_other',
+		'кнопка': 'card__category_button',
   }
 
   constructor(container: HTMLElement, events: IEvents, protected buttonIsDisabled?: boolean) {
@@ -65,29 +66,13 @@ export class Card extends Component<IBaseCard> {
 
   set category(value: string) {
     this.setText(this._category, value);
-    if (this._category) { this.toggleClass(this._category, this.categoryColor[value], true) }
+    if (this._category) {
+    this.toggleClass(this._category, this.categoryColor[value], true)
+    }
   }
 
   set description(value: string) {
     this.setText(this._description, value);
-  }
-
-  set price(value: number | null) {
-    if (value == null) {
-      this.setText(this._price, 'Бесценно');
-      this.setBasketState(false); // Устанавливаем состояние "нельзя купить"
-    } else {
-      this.setText(this._price, value + ' синапсов');
-      // Состояние кнопки обновится через buttonDisabled
-    }
-  }
-
-  set id(value: string) {
-    this._id = value;
-  }
-
-  set buttonDisabled(value: boolean) {
-    this.setBasketState(value);
   }
 
   private setBasketState(isInBasket: boolean) {
@@ -100,4 +85,20 @@ export class Card extends Component<IBaseCard> {
     }
   }
 
-} 
+  set price(value: number | null) {
+    if (value == null) {
+      this.setText(this._price, 'Бесценно');
+      this.setBasketState(false); 
+    } else {
+      this.setText(this._price, value + ' синапсов');
+    }
+  }
+
+  set id(value: string) {
+    this._id = value;
+  }
+
+  set buttonDisabled(value: boolean) {
+    this.setBasketState(value);
+  }
+}

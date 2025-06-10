@@ -11,7 +11,7 @@ export class UserDataModel {
     items: []
   };
 
-  constructor(events: IEvents) {}
+  constructor(protected events: IEvents) {}
 
   setOrderData(data: Partial<IForm>) {
     Object.assign(this.orderData, data);
@@ -32,8 +32,8 @@ export class UserDataModel {
     };
   }
 
-  validate(): boolean {
-    return true
+  validate(fields: (keyof IForm)[]): boolean {
+    return fields.every(field => !!this.orderData[field]);
   }
 
 }

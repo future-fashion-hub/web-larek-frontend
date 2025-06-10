@@ -1,37 +1,45 @@
-import { ensureElement } from "../../utils/utils";
+import { IBasket } from "../../types";
+import { createElement, ensureElement } from "../../utils/utils";
 import { Component } from "../base/Component";
 import { IEvents } from "../base/events";
 
-interface IBasket {
-  busketItems: HTMLElement[], 
-  totalPrice: number,
-  orderButton: HTMLButtonElement 
-}
-
-export class Busket extends Component<IBasket> {
-  protected _busketItems: HTMLElement;
+export class Basket extends Component<IBasket> {
+  protected _basketItems: HTMLElement;
   protected _totalPrice: HTMLElement;
   protected _orderButton: HTMLButtonElement;
 
-  constructor(container: HTMLElement, events: IEvents) {
+  constructor(container: HTMLElement, protected events: IEvents) {
     super(container)
 
-    this._busketItems = ensureElement('.basket__list', this.container)
+    this._basketItems = ensureElement('.basket__list', this.container)
     this._totalPrice = this.container.querySelector('.basket__price')
-    this._orderButton = this.container.querySelector('.basket__button') as HTMLButtonElement;
+    this._orderButton = this.container.querySelector('.basket__button');
+
+    this._orderButton.addEventListener('click', () => {
+        this.events.emit('order:start')
+    })
+
   }
 
-  set busketItems(items: HTMLElement[]) {
-    items.forEach((item, index) => {
-      const indexElement = item.querySelector('.basket__item-index');
-      if (indexElement) {
-        indexElement.textContent = String(index + 1); 
-      }
-    });
-    this._busketItems.replaceChildren(...items);
+  set basketItems(items: HTMLElement[]) {
+    if (items.length) {
+      items.forEach((item, index) => {
+          const indexItem = item.querySelector('.basket__item-index');
+          indexItem.textContent = String(index + 1)
+      })
+      this._basketItems.replaceChildren(...items);
+    } else {
+      this._basketItems.replaceChildren(createElement<HTMLParagraphElement>('p', {
+      textContent: 'Корзина пуста'
+      }));
+    }
   }
+
 
   set totalPrice(price: number) {
     this.setText(this._totalPrice, price + ' синапсов')
+    if (price <= 0) {
+        this.setDisabled(this._orderButton, true)
+    }
   }
 }
