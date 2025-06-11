@@ -38,6 +38,8 @@ const successTemp = document.querySelector('#success') as HTMLTemplateElement
 const orderPayment = new Payment(cloneTemplate(orderTemp), events)
 const orderContacts = new Contacts(cloneTemplate(contactsTemp), events)
 const orderSuccess = new Success(cloneTemplate(successTemp), events)
+const basketView = new Basket(cloneTemplate(basketTemp), events)
+
 
 
 api.getCards()
@@ -76,14 +78,13 @@ events.on('modal:close', () => {
 events.on('basket:open', () => {
   const cardInBasket = basket.getItems()
   const totalPrice = basket.getTotalPrice()
-  const cardBasketListHTML = cardInBasket.map(item => new Card(cloneTemplate(cardInBasketTemp), events).render(item))
-  const busketHTML = new Basket(cloneTemplate(basketTemp), events).render({
+  const cardBasketListHTML = cardInBasket.map(item => new Card(cloneTemplate(cardInBasketTemp), events).render(item));
+  const basketHTML = basketView.render({
     basketItems: cardBasketListHTML,
     totalPrice: totalPrice
   })
-  user.setOrderData({total: totalPrice, items: basket.getItemsId()})
   modal.render({
-    content: busketHTML
+    content: basketHTML
   })
 });
 
@@ -91,17 +92,13 @@ events.on('basket:add', (data: {id: string}) => {
   if (!basket.getItems().find(item => item.id === data.id)) {
     const cardById = catalog.getCard(data.id);
     basket.addItems(cardById)
-    page.render({
-      counter: basket.getTotalEmount()
-    })
+    page.counter = basket.getTotalEmount()
   } 
 })
 
 events.on('basket:remove', (data: {id: string}) => {
   basket.removeItem(data.id)
-  page.render({
-    counter: basket.getTotalEmount()
-  })
+  page.counter = basket.getTotalEmount()
 })
 
 events.on('order:start', () => { 
@@ -138,18 +135,25 @@ events.on('phone:input', (data: {phone: string}) => {
 })
 
 events.on('contacts:submit', () => {
-  const totalPrice = basket.getTotalPrice();
-  orderSuccess.total = totalPrice; 
-
-  modal.render({
-      content: orderSuccess.render() 
-  });
-
-  basket.clearBasket();
-  page.render({ counter: 0 }); 
-
-  api.sendOrder(user.getOrderData())
-    .then(() => user.resetOrder())
+  const payload = {
+    ...user.getOrderData(),
+     total: basket.getTotalPrice(),
+      items: basket.getItemsId()
+ }
+  api.sendOrder(payload) 
+    .then(() => {
+      basket.clearBasket();
+      page.counter = 0
+      user.resetOrder()
+      
+      orderContacts.clearContacts()
+      orderPayment.clearPayment()
+      orderSuccess.total = payload.total; 
+      modal.render({
+          content: orderSuccess.render() 
+      });
+    })
+    .catch(err => console.error(err))
 })
 
 events.on('success:submit', () => {

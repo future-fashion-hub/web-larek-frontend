@@ -53,4 +53,10 @@ export class Payment extends Form {
         this.toggleClass(this._paymentCard, 'button_alt-active', false);
         this.toggleClass(this._paymentCash, 'button_alt-active', false)
     }
+
+    clearPayment() {
+        this._address.value = ''
+        this.resetPayment()
+        this.valid = false
+    }
 }

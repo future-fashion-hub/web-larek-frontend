@@ -43,4 +43,10 @@ export class Contacts extends Form {
     set phone(value: string) {
         this.setText(this._phone, value)
     }
+
+    clearContacts() {
+        this._email.value = ''
+        this._phone.value = ''
+        this.valid = false
+    }
 }

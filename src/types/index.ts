@@ -16,6 +16,13 @@ export interface IForm {
   items: string[]
 }
 
+export interface IFormUserData {
+  payment: string,
+  address: string,
+  email: string,
+  phone: string,
+}
+
 export interface IFormState {
   valid: boolean
   submit: HTMLButtonElement,

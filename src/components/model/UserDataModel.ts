@@ -1,14 +1,12 @@
-import { IForm } from '../../types';
+import { IForm, IFormUserData } from '../../types';
 import { IEvents } from "../base/events";
 
 export class UserDataModel {
-  protected orderData: IForm = {
+  protected orderData: IFormUserData = {
     payment: '',
     address: '',
     email: '',
     phone: '',
-    total: 0,
-    items: []
   };
 
   constructor(protected events: IEvents) {}
@@ -17,7 +15,7 @@ export class UserDataModel {
     Object.assign(this.orderData, data);
   }
 
-  getOrderData(): IForm {
+  getOrderData(): IFormUserData {
     return this.orderData;
   }
 
@@ -27,12 +25,10 @@ export class UserDataModel {
         address: '',
         email: '',
         phone: '',
-        total: 0,
-        items: []
     };
   }
 
-  validate(fields: (keyof IForm)[]): boolean {
+  validate(fields: (keyof IFormUserData)[]): boolean {
     return fields.every(field => !!this.orderData[field]);
   }
 
